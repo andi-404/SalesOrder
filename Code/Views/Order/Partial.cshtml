@@ -1,0 +1,154 @@
+﻿@using SalesOrder.Services.Order.Models
+@using System.Globalization
+@using SalesOrder.Extensions
+@model SalesOrder.Services.Order.Models.OrderModel
+@{
+    var Count = 1;
+    decimal TQty = 0;
+    decimal TPrice = 0;
+}
+<div class="card mb-2">
+    <div class="card-header">
+        <h5 class="text-center">Sales Order Information</h5>
+    </div>
+    <div class="card-body">
+        <div id="message"></div>
+        <form id="frm-head">
+            <div class="row">
+                <input class="form-control" type="hidden" id="SoOrderId" name="SoOrderId" value="@Model.SoOrderId" />
+
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" class="col-sm-4 col-form-label">
+                            Sales Order Number
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" id="OrderNo" name="OrderNo" value="@Model.OrderNo"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="" class="col-sm-4 col-form-label">
+                            Order Date
+                        </label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="date" id="OrderDate" name="OrderDate" value="@(Model.OrderDate == null ? "" : Model.OrderDate.Value.ToString("yyyy-MM-dd"))" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" class="col-sm-4 col-form-label">
+                            Customer
+                        </label>
+                        <div class="col-sm-8">
+                            <select class="form-control" id="ComCutomerId" name="ComCutomerId">
+                                <option></option>
+                                @foreach (var item in ViewBag.Customer)
+                                {
+                                    if (item.id == Model.ComCutomerId)
+                                    {
+                                        <option value="@item.id" selected>@item.text</option>
+
+                                    } else
+                                    {
+                                        <option value="@item.id">@item.text</option>
+
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="" class="col-sm-4 col-form-label">
+                            Address
+                        </label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" type="text" id="Address" name="Address" rows="3">@Model.Address</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header">
+        <h5 class="text-center">Detail Item Information</h5>
+    </div>
+    <div class="card-body">
+        <button class="btn btn-primary btn-sm btn-add-item mb-4">Add Item</button>
+        <table class="table table-striped" id="tbl-item">
+            <thead>
+                <tr>
+                    <td width="1%" class="text-center">NO</td>
+                    <td width="10%" class="text-center">ACTION</td>
+                    <td width="8%" class="text-center">ITEM NAME</td>
+                    <td width="8%" class="text-center">QTY</td>
+                    <td width="8%" class="text-center">PRICE</td>
+                    <td width="8%" class="text-center">TOTAL</td>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.ListItem.Count() > 0)
+                {
+                    foreach (ItemModel item in Model.ListItem)
+                    {
+                        var total = item.Quantity * item.Price;
+                        TQty += item.Quantity;
+                        TPrice += total;
+
+                        <tr>
+                            <td>@Count</td>
+                            <td>
+                                <div class="text-center">
+                                    <button class="btn btn-primary btn-sm edit-item"><i class="bi bi-pencil-square"></i></button>
+                                    <button class="btn btn-success btn-sm d-none save-item"><i class="bi bi-check-square"></i></button>
+                                    <button class="btn btn-danger btn-sm delete-item"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <input type="hidden" class="item-id" value="@item.SoItemId" />
+                                <input type="text" class="form-control name d-none" value="@item.ItemName" />
+                                <label>@item.ItemName</label>
+                            </td>
+                            <td>
+                                <input type="number" min="1" class="form-control calculate-row qty sum d-none" value="@item.Quantity" />
+                                <label>@item.Quantity</label>
+                             </td>
+                            <td>
+                                <input type="number" min="1" class="form-control calculate-row price sum d-none" value="@item.Price.ToString("0.00")" />
+                                <label>@item.Price.ToNumberID()</label>
+                             </td>
+                            <td>
+                                <input type="text" class="form-control calculate-row total-row d-none" readOnly total="@total.ToString("0.00")" value="@total.ToNumberID()" />
+                                <label>@total.ToNumberID()</label>
+                            </td>
+                        </tr>
+                        Count++;
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+                        <div class="row justify-content-between">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-7">
+                                <label for="" class="col-sm-3 col-form-label">
+                                    Total Item : <span class="tf-qty">@TQty</span>
+                                </label>
+                                <label for="" class="col-sm-5 col-form-label">
+                                    Total Ammount : <span class="tf-total">@TPrice.ToNumberID()</span>
+                                </label>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<div class="mt-4 text-center">
+    <button class="btn btn-primary submit-data">Save</button>
+    <a class="btn btn-danger" href="/">Close</a>
+</div>

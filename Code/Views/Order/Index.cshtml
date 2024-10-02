@@ -1,0 +1,71 @@
+﻿@using SalesOrder.Services.Order.Models
+@{
+    ViewData["Title"] = "Order Page";
+}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label">
+                        Keyword
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="Keyword" id="Keyword" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label">
+                        Order Date
+                    </label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="date" name="Date" id="Date" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="btn btn-primary btn-sm float float-right btn-filter">Search</a>
+
+        <div class="mb-4 mt-4">
+            <a asp-controller="Order" asp-action="Add" class="btn btn-primary btn-sm pjax">Add New Data</a>
+            <button class="btn btn-success btn-sm btn-exp">Export Data</button>
+        </div>
+        <div id="div-table">
+            <div id="div-reload">
+                <table id="tbl-Order" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <td>No</td>
+                            <td>Action</td>
+                            <td>Sales Order</td>
+                            <td>Order Date</td>
+                            <td>Customer</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var no = 1;
+                        }
+                        @foreach (OrderModel item in ViewBag.ListOrder)
+                        {
+                            <tr>
+                                <td>@no</td>
+                                <td>
+                                    <a asp-controller="Order" asp-action="Update" asp-route-id="@item.SoOrderId" class="btn btn-primary btn-sm"><i class="bi bi-pencil-square"></i></a>
+                                    <button class="btn btn-danger btn-sm btn-delete-order" orderid="@item.SoOrderId"><i class="bi bi-trash"></i></button>
+                                </td>
+                                <td>@item.OrderNo</td>
+                                <td>@item.OrderDate.Value.ToString("dd/M/yyyy")</td>
+                                <td>@item.ComCutomerName</td>
+                            </tr>
+
+                            no++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
